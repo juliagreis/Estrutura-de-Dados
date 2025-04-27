@@ -57,9 +57,4 @@ A classe `MyVecException` é usada para lançar erros como:
 - Índices fora dos limites.
 - Inserção em posições inválidas.
 
-Exemplo:
-```cpp
-if (pos < 0 || pos >= dataSize) {
-    throw MyVecException("Índice fora dos limites.");
-}
 
