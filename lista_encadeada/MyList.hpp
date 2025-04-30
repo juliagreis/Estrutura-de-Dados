@@ -23,7 +23,7 @@ class MyList{
         void print()const ;   //ok
 
         int size(){return dataSize;}
-        bool empty(){return dataSize==0}
+        bool empty(){return dataSize==0;}
 };
 
 //____construtor e destrutor____//
@@ -70,7 +70,7 @@ void MyList<T>::pushback(const T& elem){
 template<class T>
 void MyList<T>::pushfront(const T& elem){
     if(dataSize==0){
-        pushfront(elem);
+        pushback(elem);
         return;
     }
     Node<T>* aux= new Node<T>(elem);
@@ -100,7 +100,7 @@ void MyList<T>::insert(const T& elem, const int pos){
     //para casos que a posicao possui um elemento anterior e um posterior a ele
     Node<T> *anterior;
     for(int i=0;i<pos-1;i++){ //busca o node que aponta para a posicao
-        anterior=dataFirst->next;
+        anterior=anterior->next;
     }
     Node<T> *novo=new Node<T>(elem);
     novo->next=anterior->next;
