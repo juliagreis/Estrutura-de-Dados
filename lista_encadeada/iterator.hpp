@@ -10,11 +10,13 @@ class Iterator{
         Node<T> *ptr;
     public:
         //construtor
-        Iterator(Node<T> *p);
-        T &operator*();
+        Iterator(Node<T> *p);              //ok
+        T &operator*();                     //ok
         const T &operator*()const ;
-        bool operator==(const Iterator<T> &other) const ;
-        bool operator!=(const Iterator<T> &other) const ;
+        bool operator==(const Iterator<T> &other) const ;   //ok
+        bool operator!=(const Iterator<T> &other) const ;   //ok
+        Iterator<T>& operator++() ;              
+        Iterator<T>& operator++(int pos) ;
 
 };
 template<class T>
