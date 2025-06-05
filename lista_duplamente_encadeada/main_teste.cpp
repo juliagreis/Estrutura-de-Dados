@@ -29,11 +29,5 @@ int main() {
     lista.insert(25, 4);
     lista.print();  // Esperado: 5 10 15 20 25
 
-    Lista_2<int> *lista_um_elem=new Lista_2<int>;
-    lista_um_elem->print();
-    lista_um_elem->pushBack(3);
-     lista_um_elem->print();
-    delete lista_um_elem;
-
     return 0;
 }
