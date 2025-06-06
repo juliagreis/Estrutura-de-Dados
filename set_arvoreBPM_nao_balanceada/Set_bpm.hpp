@@ -1,4 +1,5 @@
 #include <algorithm>
+#include "MyQueue.h"
 
 //---------------------CLASSE NODE----------------------//
 template  <class T>
@@ -54,10 +55,20 @@ class Set_BPM{
         /*
             CONTEÚDO 2: PERCURSO
             Há diversas maneiras de percorrer uma árvore 
-            BFS-> percorre nível a nível
-            DFS->visita-se o nodo e cada um dos filhos de forma recursiva(esquerda para direita ou o cnotrário)
+
+            1--BFS-> percorre nível a nível  (uso de pilha)
+
+            2--DFS->visita-se o nodo e cada um dos filhos de forma recursiva(esquerda para direita ou o cnotrário)
+            Pré-ordem (preorder): Visita o nó atual → esquerda → direita
+            Em-ordem (inorder): Esquerda → nó atual → direita
+            Pós-ordem (postorder): Esquerda → direita → nó atual
 
         */
+       void imprimeBFS()const;
+
+       void imprimeDFS_pre_order()const;
+       void imprimeDFS_in_order()const;
+       void imprimeDFS_pos_order()const;
 
         
     private:
@@ -70,6 +81,10 @@ class Set_BPM{
         iterator find_recursion(const T& elem, Node<T> * &root);
         void delete_recursion(Node<T> *root);
 
+        void preOrder(const Node<T> *root)const;
+        void inOrder(const Node<T> *root)const;
+        void posOrder(const Node<T> *root)const;
+
     
 };
 
@@ -77,10 +92,10 @@ template <class T>
 Set_BPM<T>::Set_BPM(){ root=NULL; size=0;}
 
 template <class T>
-void delete_recursion(Node<T> *root){
+void Set_BPM<T>::delete_recursion(Node<T> *root){
     //nao preciso tratar se os filhos sao null pq o proprio compilador ira ignorar o delete se este for o caso
     if(root==NULL) return;
-    delete_recursion(root->left)
+    delete_recursion(root->left);
     delete_recursion(root->right);
     delete root;
 }
@@ -142,4 +157,62 @@ Set_BPM<T>& Set_BPM<T>::operator=(const Set_BPM<T> &other){
     size=other.size;
     return *this;
 
+}
+
+template<class T>
+void Set_BPM<T>::imprimeBFS()const{
+    if(root==NULL) return;
+    //vamos imprimir nivel a nivel da arvore utilizando uma fila -> da esquerda para a direita
+    MyQueue<Node<T>*> fila;
+    fila.push(root);
+
+    while(!fila.empty()){
+        Node<T> *aux= fila.front();
+        fila.pop();
+        std::cout<<aux->elem<<std::endl;
+        if(aux->left) fila.push(aux->left);
+        if(aux->right) fila.push(aux->right);
+    }
+}
+
+template<class T>
+void Set_BPM<T>::preOrder(const Node<T> *root)const{
+    if(root==NULL) return;
+    std::cout<<root->elem<<" ";   //a impressao ocorre pre
+    preOrder(root->left);
+    preOrder(root->right);
+}
+
+template<class T>
+void Set_BPM<T>::imprimeDFS_pre_order()const{
+    //Pré-ordem (preorder): Visita o nó atual → esquerda → direita
+    preOrder(root);
+}
+
+template<class T>
+void Set_BPM<T>::inOrder(const Node<T> *root)const{
+    if(root==NULL) return;
+    inOrder(root->left);
+    std::cout<<root->elem<<" ";   //a impressao ocorre in
+    inOrder(root->right);
+}
+
+template<class T>
+void Set_BPM<T>::imprimeDFS_in_order()const{
+    //Pré-ordem (preorder): Visita o esquerda→ nó atual → direita
+    inOrder(root);
+}
+
+template<class T>
+void Set_BPM<T>::posOrder(const Node<T> *root)const{
+    if(root==NULL) return;
+    posOrder(root->left);
+    posOrder(root->right);
+    std::cout<<root->elem<<" ";   //a impressao ocorre pos
+}
+
+template<class T>
+void Set_BPM<T>::imprimeDFS_pos_order()const{
+    //Pré-ordem (preorder): Visita o esquerda→ nó atual → direita
+    posOrder(root);
 }

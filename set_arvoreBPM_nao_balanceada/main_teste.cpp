@@ -8,6 +8,10 @@ int main() {
     std::pair<Set_BPM<int>::iterator, bool> resultado2 = conjunto.insert(5);
     std::pair<Set_BPM<int>::iterator, bool> resultado3 = conjunto.insert(15);
     std::pair<Set_BPM<int>::iterator, bool> resultado4 = conjunto.insert(10); // valor repetido
+    conjunto.insert(2);
+    conjunto.insert(8);
+    conjunto.insert(24);
+    conjunto.insert(3);
 
     if (resultado1.second) std::cout << "10 inserido\n";
     else std::cout << "10 ja existia\n";
@@ -26,6 +30,6 @@ int main() {
     if (it2 == conjunto.end()) {
         std::cout << "99 nao encontrado\n";
     }
-
+    conjunto.imprimeDFS_pos_order();
     return 0;
 }
