@@ -46,6 +46,19 @@ class Set_BPM{
 
         std::pair<iterator,bool> insert(const T& elem);
         iterator find(const T& elem);
+
+        Node<T> copiaNodes(Node<T> * root) const;
+        Set_BPM &operator=(const Set_BPM &other);
+
+        //bfs e dfs
+        /*
+            CONTEÚDO 2: PERCURSO
+            Há diversas maneiras de percorrer uma árvore 
+            BFS-> percorre nível a nível
+            DFS->visita-se o nodo e cada um dos filhos de forma recursiva(esquerda para direita ou o cnotrário)
+
+        */
+
         
     private:
 
@@ -55,14 +68,27 @@ class Set_BPM{
         //funcoes auxiliares
         std::pair<iterator,bool>insert_recursion(const T& elem, Node<T> * &root);
         iterator find_recursion(const T& elem, Node<T> * &root);
+        void delete_recursion(Node<T> *root);
 
     
 };
 
 template <class T>
 Set_BPM<T>::Set_BPM(){ root=NULL; size=0;}
+
 template <class T>
-Set_BPM<T>::~Set_BPM() {}
+void delete_recursion(Node<T> *root){
+    //nao preciso tratar se os filhos sao null pq o proprio compilador ira ignorar o delete se este for o caso
+    if(root==NULL) return;
+    delete_recursion(root->left)
+    delete_recursion(root->right);
+    delete root;
+}
+
+template <class T>
+Set_BPM<T>::~Set_BPM() {
+    delete_recursion(root);
+}
 
 template<class T>
 std::pair<typename Set_BPM<T>::iterator,bool> Set_BPM<T>::insert_recursion(const T& elem, Node<T> * &root){
@@ -93,4 +119,27 @@ typename Set_BPM<T>::iterator Set_BPM<T>:: find_recursion(const T& elem, Node<T>
 template <class T>
 typename Set_BPM<T>::iterator Set_BPM<T>::find(const T& elem){
     return find_recursion(elem,root);
+}
+
+template <class T>
+Node<T> Set_BPM<T>::copiaNodes(Node<T> * root)const {
+    if(root==NULL) return root;
+
+    Node<T> aux=new Node<T>(root->elem); //fiz um node de mesmo valor
+    aux->left=copiaNodes(root->left);
+    aux->right=copiaNodes(root->right);
+
+    return aux;
+}
+
+template <class T>
+Set_BPM<T>& Set_BPM<T>::operator=(const Set_BPM<T> &other){
+    //verificamos se estamos tentando uma auto-atibuicao
+    if(this==&other) return *this;
+    //garantimos que other está vazio
+    delete_recursion(other.root);
+    root=copiaNodes(other.root);
+    size=other.size;
+    return *this;
+
 }
