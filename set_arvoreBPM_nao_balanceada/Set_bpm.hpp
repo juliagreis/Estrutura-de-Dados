@@ -28,7 +28,22 @@ class Set_BPM_iterator{
         bool operator!=(const Set_BPM_iterator &other){return !(ptr==other.ptr);}
         Set_BPM_iterator& operator++();  //nao recebe nada pois irá """somar""" 1 na memoria
 	    Set_BPM_iterator& operator--();
+        Set_BPM_iterator& operator++(int);  //esse int declarado é so pro compilador entender que é de pos incremento
+        Set_BPM_iterator& operatorii(int);
 };
+
+template <class T>
+Set_BPM_iterator<T>&Set_BPM_iterator<T>::operator++(int){
+    Set_BPM_iterator<T> itaux(*this);
+    ++(*this);
+    return itaux;
+}
+template <class T>
+Set_BPM_iterator<T>&Set_BPM_iterator<T>::operator++(int){
+    Set_BPM_iterator<T> itaux(*this);
+    --(*this);
+    return itaux;
+}
 template<class T>
 Set_BPM_iterator<T>& Set_BPM_iterator<T>::operator++(){
 	//o menor elemento maior que ele, logo:
