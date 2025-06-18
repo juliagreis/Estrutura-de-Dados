@@ -4,7 +4,7 @@
 //---------------------CLASSE NODE----------------------//
 template  <class T>
 class Node {
-	public: //classe auxiliar.. vamos utiliza-la apenas neste arquivo (nao e' muito necessario ter encapsulamento)
+	public: 
 		Node(const T &elem_) : elem(elem_),left(NULL), right(NULL), parent(NULL) {}
 		Node<T> *left, *right, *parent;
 		T elem;
@@ -29,7 +29,7 @@ class Set_BPM_iterator{
         Set_BPM_iterator& operator++();  //nao recebe nada pois irá """somar""" 1 na memoria
 	    Set_BPM_iterator& operator--();
         Set_BPM_iterator& operator++(int);  //esse int declarado é so pro compilador entender que é de pos incremento
-        Set_BPM_iterator& operatorii(int);
+        Set_BPM_iterator& operator--(int);
 };
 
 template <class T>
@@ -39,7 +39,7 @@ Set_BPM_iterator<T>&Set_BPM_iterator<T>::operator++(int){
     return itaux;
 }
 template <class T>
-Set_BPM_iterator<T>&Set_BPM_iterator<T>::operator++(int){
+Set_BPM_iterator<T>&Set_BPM_iterator<T>::operator--(int){
     Set_BPM_iterator<T> itaux(*this);
     --(*this);
     return itaux;
@@ -122,6 +122,15 @@ class Set_BPM{
        void imprimeDFS_pre_order()const;
        void imprimeDFS_in_order()const;
        void imprimeDFS_pos_order()const;
+
+
+       /*
+       CONTEUDO 3: ERASE    
+       o iterador continua válido?
+       */
+        void erase(iterator it);
+        void erase(Node<T> *position);
+    	int erase(const T&elem); //remove o elemento do conjunto e retorna a quantidade removida (sera 0 ou 1 para conjuntos
 
         
     private:
@@ -243,10 +252,11 @@ void Set_BPM<T>::imprimeBFS()const{
     while(!fila.empty()){
         Node<T> *aux= fila.front();
         fila.pop();
-        std::cout<<aux->elem<<std::endl;
+        std::cout<<aux->elem;
         if(aux->left) fila.push(aux->left);
         if(aux->right) fila.push(aux->right);
     }
+    std::cout<<std::endl;
 }
 
 template<class T>
@@ -289,4 +299,56 @@ template<class T>
 void Set_BPM<T>::imprimeDFS_pos_order()const{
     //Pré-ordem (preorder): Visita o esquerda→ nó atual → direita
     posOrder(root);
+}
+
+template <class T>
+void Set_BPM<T>::erase(Node<T> *ptr){
+
+    if(ptr==NULL) return;
+    
+    else if (!ptr->left &&!ptr->right){
+        //se ele nao tem nenhum filho, basta exclui-lo
+        Node<T>* pai=ptr->parent;
+        if(pai->left&&pai->left==ptr) pai->left=NULL;
+        else if(pai->right&&pai->right==ptr) pai->right=NULL;
+        else root=NULL;  //é a raiz
+        delete ptr;
+        size--;
+    }
+    else if(ptr->left &&ptr->right){
+        //se tem filho dos dois lados
+        Node<T>* aux=ptr->right;
+        while(aux->left) aux=aux->left;
+        ptr->elem=aux->elem;
+        erase(aux);
+        return;
+    }
+    else if(ptr->left ||ptr->right){
+        //se só tem um filho 
+        Node<T>* filho = ptr->left ? ptr->left : ptr->right;
+        Node<T>* pai = ptr->parent;
+
+        if (pai) {
+            if (pai->left == ptr) pai->left = filho;
+            else pai->right = filho;
+        } else {
+            root = filho; //se nao tem pai, é raiz
+        }
+        if (filho) filho->parent = pai;
+        delete ptr;
+        size--;
+    }
+}
+
+template<class T>
+void Set_BPM<T>::erase(iterator it){
+    erase(it.ptr);
+}
+
+template <class T>
+int Set_BPM<T>::erase(const T&elem){
+    if(find(elem)==end())
+        return 0;
+    erase(find(elem));
+    return 1;
 }
