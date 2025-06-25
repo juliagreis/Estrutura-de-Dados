@@ -30,6 +30,7 @@ class Set_BPM_iterator{
 	    Set_BPM_iterator& operator--();
         Set_BPM_iterator& operator++(int);  //esse int declarado é so pro compilador entender que é de pos incremento
         Set_BPM_iterator& operator--(int);
+
 };
 
 template <class T>
@@ -131,6 +132,12 @@ class Set_BPM{
         void erase(iterator it);
         void erase(Node<T> *position);
     	int erase(const T&elem); //remove o elemento do conjunto e retorna a quantidade removida (sera 0 ou 1 para conjuntos
+        bool checkTree() const; //funcao para verificar a integridade da arvore! (usada para debugging)
+
+
+        //funcao que verifica a altura da arvore
+        int altura() const;
+        bool isAVL()const;
 
         
     private:
@@ -146,6 +153,11 @@ class Set_BPM{
         void preOrder(const Node<T> *root)const;
         void inOrder(const Node<T> *root)const;
         void posOrder(const Node<T> *root)const;
+
+        bool checkTree(Node<T> *root) const;
+
+        int altura(Node<T> *ptr) const;
+        bool isAVL(Node<T> *root)const;
 
     
 };
@@ -302,29 +314,27 @@ void Set_BPM<T>::imprimeDFS_pos_order()const{
 }
 
 template <class T>
-void Set_BPM<T>::erase(Node<T> *ptr){
+void Set_BPM<T>::erase(Node<T>* ptr) {
+    if (!ptr) return;
 
-    if(ptr==NULL) return;
-    
-    else if (!ptr->left &&!ptr->right){
-        //se ele nao tem nenhum filho, basta exclui-lo
-        Node<T>* pai=ptr->parent;
-        if(pai->left&&pai->left==ptr) pai->left=NULL;
-        else if(pai->right&&pai->right==ptr) pai->right=NULL;
-        else root=NULL;  //é a raiz
+    if (!ptr->left && !ptr->right) {
+        Node<T>* pai = ptr->parent;
+        if (pai) {
+            if (pai->left == ptr) pai->left = nullptr;
+            else if (pai->right == ptr) pai->right = nullptr;
+        } else {
+            root = nullptr;
+        }
         delete ptr;
         size--;
-    }
-    else if(ptr->left &&ptr->right){
-        //se tem filho dos dois lados
-        Node<T>* aux=ptr->right;
-        while(aux->left) aux=aux->left;
-        ptr->elem=aux->elem;
-        erase(aux);
-        return;
-    }
-    else if(ptr->left ||ptr->right){
-        //se só tem um filho 
+    } 
+    else if (ptr->left && ptr->right) {
+        Node<T>* aux = ptr->right;
+        while (aux->left) aux = aux->left;
+        ptr->elem = aux->elem;
+        erase(aux); 
+    } 
+    else {
         Node<T>* filho = ptr->left ? ptr->left : ptr->right;
         Node<T>* pai = ptr->parent;
 
@@ -332,9 +342,10 @@ void Set_BPM<T>::erase(Node<T> *ptr){
             if (pai->left == ptr) pai->left = filho;
             else pai->right = filho;
         } else {
-            root = filho; //se nao tem pai, é raiz
+            root = filho;
         }
         if (filho) filho->parent = pai;
+
         delete ptr;
         size--;
     }
@@ -351,4 +362,62 @@ int Set_BPM<T>::erase(const T&elem){
         return 0;
     erase(find(elem));
     return 1;
+}
+
+template<class T>
+bool Set_BPM<T>::checkTree() const{
+    return checkTree(root);
+}
+
+template<class T>
+bool Set_BPM<T>::checkTree(Node<T> *root) const{
+    if(root==NULL) return true;
+    if(root->left){
+        if( root->left->elem < root->elem && root->left->parent==root){
+            return checkTree(root->left);
+        }
+        else return false;
+    }
+    else if(root->right){
+        if( root->right->elem > root->elem && root->right->parent==root){
+            return checkTree(root->left);
+        }
+        else return false;
+    }
+    else return true;
+}
+template<class T>
+int Set_BPM<T>::altura() const{
+    return altura(root);
+}
+
+template<class T>
+int Set_BPM<T>::altura(Node<T> *root) const{
+
+    if(root==NULL) return -1;
+    /*
+    else if(root->left && root->right){
+        return 1+max(altura(root->left),altura(root->right));
+    }
+    else if(root->left){
+        return 1+altura(root->left);
+    }
+    else if(root->right){
+        return 1+altura(root->right);
+    } 
+    else return 0;
+    */
+   return 1+max(altura(root->left),altura(root->right));
+}
+
+template<class T>
+bool Set_BPM<T>::isAVL()const{
+    return isAVL(root);
+}
+template<class T>
+bool Set_BPM<T>::isAVL(Node<T> *root)const{
+    if(root==NULL) return true;
+    bool check = abs(altura(root->right)-altura(root->left))<=1;
+    return isAVL(root->left) && isAVL(root->right) && check;
+    
 }

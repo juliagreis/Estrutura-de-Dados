@@ -28,7 +28,7 @@ int main() {
 	insere(s,1);
 
 	s.imprimeBFS();
-	cout << endl;
+	cout <<"o tamanho dessa arvore é "<<s.altura() <<endl;
 
 	//qual sera o formato dessa arvore?
 	//desenhe-a!
@@ -45,6 +45,10 @@ int main() {
 	s2.insert('r');
 	s2.insert('c');
 
+
+	if(s.checkTree()==true) std::cout<<"correto"<<std::endl;
+	else std::cout<<"incorreto"<<std::endl;
+	cout <<"o tamanho dessa arvore é "<<s2.altura() <<endl;
 	
 	{
 		Set_BPM<char> s3 = s2;
@@ -62,5 +66,11 @@ int main() {
 	for(char c:s2) {
 		erase(s3,c);
 	}
+	Set_BPM<int> s4;
+
+	
+	if(s4.isAVL()) std::cout<<"é AVL\n";
+	else std::cout<<"nao é AVL\n";
+
 
 }
